@@ -29,7 +29,13 @@ DELTA = { #移動量辞書
 
 def main():
     #課題3:ゲームオーバー画面
-    def Gameover():
+    def Gameover() -> None:
+        """
+        画面ブラックアウト、泣いているこうかとん画像、文字「Game Over」の表示を行う
+        表示時間は5秒
+        引数：なし
+        戻り値：なし
+        """
         screen.blit(gOV_img, [0, 0])
         screen.blit(txt, [WIDTH/2-150, HEIGHT/2])
         screen.blit(kcry_img, [WIDTH/2-200, HEIGHT/2])
