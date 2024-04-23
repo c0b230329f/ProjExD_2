@@ -1,6 +1,7 @@
 import os
 import random
 import sys
+import time
 import pygame as pg
 
 
@@ -25,7 +26,17 @@ DELTA = { #移動量辞書
     pg.K_UP:(0, -5),pg.K_DOWN:(0, +5), pg.K_LEFT:(-5, 0),pg.K_RIGHT:(+5, 0)
         }
 
+
 def main():
+    #課題3:ゲームオーバー画面
+    def Gameover():
+        screen.blit(gOV_img, [0, 0])
+        screen.blit(txt, [WIDTH/2-150, HEIGHT/2])
+        screen.blit(kcry_img, [WIDTH/2-200, HEIGHT/2])
+        screen.blit(kcry_img, [WIDTH/2+160, HEIGHT/2])
+        pg.display.update() #画面更新
+        time.sleep(5)
+    
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
     bg_img = pg.image.load("fig/pg_bg.jpg")    
@@ -41,6 +52,14 @@ def main():
     bomb_rct.center = random.randint(0, WIDTH), random.randint(0, HEIGHT)
     vx, vy = +5, +5 #速さ
 
+    #課題3:ゲームオーバー
+    gOV_img = pg.Surface((WIDTH,HEIGHT))
+    pg.draw.rect(gOV_img, (0,0,0), (0, 0, WIDTH, HEIGHT))
+    gOV_img.set_alpha(200)
+    font = pg.font.Font(None, 80)
+    txt = font.render("Game Over", True, (255,255,255))
+    kcry_img = pg.image.load("fig/8.png")
+
     clock = pg.time.Clock()
     tmr = 0
     while True:
@@ -49,6 +68,7 @@ def main():
                 return
         #練習4：こうかとんと爆弾がぶつかったら、
         if kk_rct.colliderect(bomb_rct):
+            Gameover()
             print("Game Over")
             return
         
@@ -74,7 +94,7 @@ def main():
             vx *= -1
         if not tate: #縦方向にはみ出していたら
             vy *= -1
-        pg.display.update()
+        pg.display.update() #画面更新
         tmr += 1
         clock.tick(50)
 
