@@ -1,11 +1,25 @@
 import os
+import random
 import sys
 import pygame as pg
-import random
 
 
-WIDTH, HEIGHT = 1600, 900 #全画面表示の大きさ
+WIDTH, HEIGHT = 1000, 600 #1600, 900 #元の数は少しい大きい
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
+#練習3：こうかとんや爆弾が外に出ないようにする
+def check_bound(obj_rct) -> tuple[bool, bool]:
+    """
+    こうかとんRect、または、爆弾Rectの画面内外判定用の関数
+    引数：こうかとんRect or 爆弾Rect
+    戻り値：横方向判定結果、縦方向判定結果(True：画面内/False：画面外)
+    """
+    yoko, tate = True, True
+    if obj_rct.left < 0 or WIDTH < obj_rct.right:
+        yoko = False
+    if obj_rct.top < 0 or HEIGHT < obj_rct.bottom:
+        tate = False
+    return yoko, tate
 
 DELTA = { #移動量辞書
     pg.K_UP:(0, -5),pg.K_DOWN:(0, +5), pg.K_LEFT:(-5, 0),pg.K_RIGHT:(+5, 0)
@@ -41,18 +55,20 @@ def main():
             if key_lst[k]:
                 sum_mv[0] += v[0]
                 sum_mv[1] += v[1]
-        # if key_lst[pg.K_UP]:
-        #     sum_mv[1] -= 5
-        # if key_lst[pg.K_DOWN]:
-        #     sum_mv[1] += 5
-        # if key_lst[pg.K_LEFT]:
-        #     sum_mv[0] -= 5
-        # if key_lst[pg.K_RIGHT]:
-        #     sum_mv[0] += 5
+
         kk_rct.move_ip(sum_mv)
+        if check_bound(kk_rct) != (True, True):
+            kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
+            
         screen.blit(kk_img, kk_rct)
-        screen.blit(bomb_img, bomb_rct)
+        #爆弾表示
         bomb_rct.move_ip(vx, vy)
+        screen.blit(bomb_img, bomb_rct)
+        yoko, tate = check_bound(bomb_rct)
+        if not yoko: #横方向にはみ出していたら
+            vx *= -1
+        if not tate: #縦方向にはみ出していたら
+            vy *= -1
         pg.display.update()
         tmr += 1
         clock.tick(50)
